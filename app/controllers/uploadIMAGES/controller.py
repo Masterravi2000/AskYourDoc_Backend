@@ -5,13 +5,36 @@ router = APIRouter()
 
 os.makedirs("docs/images", exist_ok=True)
 
-@router.post("/upload/image")
-async def upload_image(file: UploadFile = File(...)):
-    if not file.filename.lower().endswith((".png", ".jpg", ".jpeg")):
-        return {"error": "Only PNG/JPG/JPEG allowed"}
+@router.post("/upload/images")
+async def upload_images(files: list[UploadFile] = File(...)):
+    uploaded_files = []
+    failed_files = []
 
-    file_path = f"docs/images/{file.filename}"
-    with open(file_path, "wb") as f:
-        f.write(await file.read())
+    for file in files:
+        file_path = f"docs/images/{file.filename}"
 
-    return {"filename": file.filename, "type": "IMAGE", "status": "uploaded"}
+        try:
+            # File type check
+            if not file.filename.lower().endswith((".png", ".jpg", ".jpeg")):
+                raise Exception("Invalid file type")
+            
+            # Duplicate check (before writing)
+            if os.path.exists(file_path):
+                raise Exception("File already exists")
+
+            with open(file_path, "wb") as f:
+                f.write(await file.read())
+
+            uploaded_files.append(file.filename)
+
+        except Exception as e:
+            failed_files.append({
+                "filename": file.filename,
+                "error": str(e)
+            })
+
+    return {
+        "uploaded_files": uploaded_files,
+        "failed_files": failed_files,
+        "status": "completed"
+    }
