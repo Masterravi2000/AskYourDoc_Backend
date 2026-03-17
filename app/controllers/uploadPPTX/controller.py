@@ -6,12 +6,35 @@ router = APIRouter()
 os.makedirs("docs/pptx", exist_ok=True)
 
 @router.post("/upload/pptx")
-async def upload_pptx(file: UploadFile = File(...)):
-    if not file.filename.lower().endswith(".pptx"):
-        return {"error": "Only PPTX files allowed"}
+async def upload_pptx(files: list[UploadFile] = File(...)):
+    uploaded_files = []
+    failed_files = []
 
-    file_path = f"docs/pptx/{file.filename}"
-    with open(file_path, "wb") as f:
-        f.write(await file.read())
+    for file in files:
+        file_path = f"docs/pptx/{file.filename}"
 
-    return {"filename": file.filename, "type": "PPTX", "status": "uploaded"}
+        try:
+            # file type check
+            if not file.filename.lower().endswith(".pptx"):
+                raise Exception("Invalid file type")
+
+            # Duplicate check
+            if os.path.exists(file_path):
+                raise Exception("File already exists")
+
+            with open(file_path, "wb") as f:
+                f.write(await file.read())
+
+            uploaded_files.append(file.filename)
+
+        except Exception as e:
+            failed_files.append({
+                "filename": file.filename,
+                "error": str(e)
+            })
+
+    return {
+        "uploaded_files": uploaded_files,
+        "failed_files": failed_files,
+        "status": "completed"
+    }

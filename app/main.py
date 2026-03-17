@@ -8,9 +8,6 @@ from app.controllers.uploadXLS.controller import router as upload_xls_router
 
 app = FastAPI()
 
-# Ensure docs folder always exists without failing
-os.makedirs("docs", exist_ok=True)
-
 @app.get("/")
 def home():
     return {"message": "AskYourDoc Backend is live!"}
