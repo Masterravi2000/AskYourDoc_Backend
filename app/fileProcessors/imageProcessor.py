@@ -17,6 +17,7 @@ pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tessera
 
 def extract_image(file_path: str) -> str:
     filename = os.path.basename(file_path)
+    documents = []
     
     try:
         # set current status
@@ -25,10 +26,20 @@ def extract_image(file_path: str) -> str:
         with Image.open(file_path) as img:
             text = pytesseract.image_to_string(img).strip()
             
+            if text:
+                documents.append({ 
+                    "text": text,
+                    "metadata": {
+                        "file_name": filename,
+                        "file_type": "image",
+                        "page": 1
+                    }
+                })
+            
             # set done status
             set_status(filename, "processed")
             
-        return text
+        return documents
     
     except Exception as e:
         # set failed status

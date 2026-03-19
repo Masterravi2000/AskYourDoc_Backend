@@ -3,7 +3,7 @@ import os
 from app.status_store import set_status
 
 def extract_pdf(file_path: str) -> str:
-    text_parts = []
+    documents = []
     filename = os.path.basename(file_path)
 
     try:
@@ -12,8 +12,16 @@ def extract_pdf(file_path: str) -> str:
         with fitz.open(file_path) as doc:
             for page_num, page in enumerate(doc):
                 page_text = page.get_text().strip()
+                
                 if page_text:
-                    text_parts.append(f"--- Page {page_num + 1} ---\n{page_text}")
+                    documents.append({
+                        "text": page_text,
+                        "metadata": {
+                            "file_name": filename,
+                            "file_type": "pdf",
+                            "page": page_num + 1
+                        }
+                    })
         
         set_status(filename, "processed")
 
@@ -26,4 +34,4 @@ def extract_pdf(file_path: str) -> str:
              
         raise Exception(f"PDF processing failed: {str(e)}")
 
-    return "\n\n".join(text_parts)
+    return documents

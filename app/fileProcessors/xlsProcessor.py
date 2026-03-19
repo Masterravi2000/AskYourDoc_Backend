@@ -3,7 +3,7 @@ from app.status_store import set_status
 import os
 
 def extract_xls(file_path: str) -> str:
-    text_parts = []
+    documents = []
     filename = os.path.basename(file_path)
 
     try:
@@ -21,9 +21,14 @@ def extract_xls(file_path: str) -> str:
             sheet_text = [cell.strip() for cell in sheet_text if cell.strip()]
 
             if sheet_text:
-                text_parts.append(
-                    f"--- Sheet: {sheet_name} ---\n" + " ".join(sheet_text)
-                )
+                documents.append({
+                    "text": " ".join(sheet_text),
+                    "metadata": {
+                        "file_name": filename,
+                        "file_type": "xls",
+                        "page": sheet_name
+                    }
+                })
 
         set_status(filename, "processed")
         
@@ -35,4 +40,4 @@ def extract_xls(file_path: str) -> str:
             os.remove(file_path)
         raise Exception(f"Excel processing failed: {str(e)}")
 
-    return "\n\n".join(text_parts)
+    return documents
