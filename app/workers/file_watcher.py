@@ -12,6 +12,9 @@ from app.fileProcessors.pptxProcessor import extract_pptx
 from app.fileProcessors.txtProcessor import extract_txt
 from app.fileProcessors.xlsProcessor import extract_xls
 
+# import chunker for step 3
+from app.chunking.chunker import chunk_documents
+
 
 def is_file_stable(file_path, wait_time=1.5, retries=3):
     """Check if file size is stable"""
@@ -63,19 +66,19 @@ def process_file(file_path: str):
         print(f"{filename} → processing started")
 
         if ext == ".pdf":
-            text = extract_pdf(file_path)
+            documents = extract_pdf(file_path)
 
         elif ext in [".png", ".jpg", ".jpeg"]:
-            text = extract_image(file_path)
+            documents = extract_image(file_path)
 
         elif ext == ".pptx":
-            text = extract_pptx(file_path)
+            documents = extract_pptx(file_path)
 
         elif ext == ".txt":
-            text = extract_txt(file_path)
+            documents = extract_txt(file_path)
 
         elif ext in [".xls", ".xlsx"]:
-            text = extract_xls(file_path)
+            documents = extract_xls(file_path)
 
         else:
             print(f"Unsupported file type: {file_path}")
@@ -83,7 +86,18 @@ def process_file(file_path: str):
             return
 
         print(f"{filename} → processing completed ✅")
-        print(f"\nProcessed Text (Preview):\n{text[:500]}\n")
+        
+        set_status(filename, "chunking")
+        chunks = chunk_documents(documents)
+        
+        print(f"{filename} → chunking completed ✅")
+        print(f"Total chunks created: {len(chunks)}")
+        
+        # 🔽 (Next Step Placeholder - Embedding)
+        # set_status(filename, "embedding")
+        # embed_chunks(chunks)
+        
+        set_status(filename, "success")
 
     except Exception as e:
         set_status(filename, "failed", str(e))
