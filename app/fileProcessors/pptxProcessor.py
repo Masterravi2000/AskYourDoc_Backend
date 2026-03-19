@@ -3,7 +3,7 @@ import os
 from app.status_store import set_status 
 
 def extract_pptx(file_path: str) -> str:
-    text_parts = []
+    documents = []
     filename = os.path.basename(file_path)
 
     try:
@@ -21,9 +21,14 @@ def extract_pptx(file_path: str) -> str:
                         slide_text.append(content)
 
             if slide_text:
-                text_parts.append(
-                    f"--- Slide {slide_num + 1} ---\n" + "\n".join(slide_text)
-                )
+                documents.append({
+                    "text": "\n".join(slide_text),
+                    "metadata": {
+                        "file_name": filename,
+                        "file_type": "pptx",
+                        "page": slide_num + 1
+                    }
+                })
                 
         set_status(filename, "processed")
         
@@ -36,4 +41,4 @@ def extract_pptx(file_path: str) -> str:
             
         raise Exception(f"PPTX processing failed: {str(e)}")
 
-    return "\n\n".join(text_parts)
+    return documents

@@ -3,6 +3,7 @@ from app.status_store import set_status
 
 def extract_txt(file_path: str) -> str:
     filename = os.path.basename(file_path)
+    documents = []
 
     try:
         set_status(filename, "processing")
@@ -10,9 +11,19 @@ def extract_txt(file_path: str) -> str:
         with open(file_path, "r", encoding="utf-8") as f:
             text = f.read().strip()
             
+            if text:
+                documents.append({
+                    "text": text,
+                    "metadata": {
+                        "file_name": filename,
+                        "file_type": "txt",
+                        "page": 1
+                    }
+                })
+            
         set_status(filename, "processed")
 
-        return text
+        return documents
     
     except Exception as e:
         set_status(filename, "failed", str(e))
