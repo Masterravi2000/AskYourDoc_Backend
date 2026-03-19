@@ -1,5 +1,6 @@
 from fastapi import APIRouter, UploadFile, File
 import os
+from app.status_store import set_status
 
 router = APIRouter()
 
@@ -26,12 +27,20 @@ async def upload_xls(files: list[UploadFile] = File(...)):
                 f.write(await file.read())
 
             uploaded_files.append(file.filename)
+            
+            set_status(file.filename, "uploaded")
 
         except Exception as e:
-            failed_files.append({
+             if os.path.exists(file_path):
+                 os.remove(file_path) 
+                
+             failed_files.append({
                 "filename": file.filename,
                 "error": str(e)
-            })
+             })
+            
+             set_status(file.filename, "failed", str(e))
+             print(f"{file.filename} → failed ❌ ({e})")
 
     return {
         "uploaded_files": uploaded_files,
