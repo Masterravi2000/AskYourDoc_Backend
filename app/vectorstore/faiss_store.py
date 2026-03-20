@@ -2,6 +2,10 @@ import faiss
 import numpy as np
 import pickle
 import os
+import threading
+
+# 🔒 NEW: lock to avoid race conditions (parallel threads)
+lock = threading.Lock()
 
 # ✅ dimension for MiniLM-L12-v2
 dimension = 384
@@ -15,15 +19,23 @@ metadata_store = []
 FAISS_PATH = "faiss_index.bin"
 META_PATH = "metadata.pkl"
 
+# 📦 NEW: batch control variables
+BATCH_SIZE = 10
+current_batch_count = 0
+
 def store_embeddings(embedded_data):
+    global current_batch_count
     vectors = [item["embedding"] for item in embedded_data]
     vectors = np.array(vectors).astype("float32")
-
-    index.add(vectors)  # add vectors
+    
+    with lock:
+        index.add(vectors)  # add vectors
+        current_batch_count +=1 # count files for batching
 
 def save_metadata(embedded_data):
-    for item in embedded_data:
-        metadata_store.append(item["metadata"])
+    with lock:
+        for item in embedded_data:
+            metadata_store.append(item["metadata"])
         
 # save to disk (synced)
 def save_to_disk():
@@ -31,6 +43,16 @@ def save_to_disk():
     with open(META_PATH, "wb") as f:
         pickle.dump(metadata_store, f) # save metadata
     print("FAISS + metadata saved")
+
+# batch trigger function
+def batchFills_save_to_disk():
+    global current_batch_count
+    
+    with lock:
+        if current_batch_count >= BATCH_SIZE:
+            save_to_disk()
+            current_batch_count = 0
+            print(f"💾 Batch saved! Total vectors: {index.ntotal}")
     
 # load from disk (synced)
 def load_from_disk():
