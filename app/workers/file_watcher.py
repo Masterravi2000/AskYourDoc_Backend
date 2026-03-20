@@ -18,6 +18,9 @@ from app.chunking.chunker import chunk_documents
 # import sentence transformer model for step 4
 from app.embedding.embedder import embed_chunks
 
+# import vector db for step 5
+from app.vectorstore.faiss_store import ( store_embeddings, save_metadata, save_to_disk, load_from_disk )
+
 
 def is_file_stable(file_path, wait_time=1.5, retries=3):
     """Check if file size is stable"""
@@ -101,7 +104,14 @@ def process_file(file_path: str):
         embedded_data = embed_chunks(chunks)
         print(f"{filename} → embedding completed ✅")
         print(f"Total embeddings created: {len(embedded_data)}")
-        print(f"Sample embedding vector (first 5 values): {embedded_data[0]['embedding'][:5]}")
+        if embedded_data:
+            print(f"Sample embedding vector (first 5 values): {embedded_data[0]['embedding'][:5]}")
+        
+        # step 5 - store in vector db
+        store_embeddings(embedded_data)
+        save_metadata(embedded_data)
+        save_to_disk() # persist it into memory 
+        print(f"{filename} → stored in FAISS ✅")
         
         set_status(filename, "success")
 
@@ -109,10 +119,13 @@ def process_file(file_path: str):
         set_status(filename, "failed", str(e))
         print(f"{filename} → failed ❌ ({e})")
 
-# ✅ global flag to singal frontend watcher is ready or not
-WATCHER_READY = False
 
 def start_watching():
+    global WATCHER_READY
+    
+    # Load Existing Index
+    load_from_disk()
+    
     path = "docs"
     event_handler = FileHandler()
     observer = Observer()
