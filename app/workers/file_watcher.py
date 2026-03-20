@@ -5,7 +5,7 @@ from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 from app.status_store import set_status
 
-# Import processors
+# Import processors for step 2
 from app.fileProcessors.pdfProcessor import extract_pdf
 from app.fileProcessors.imageProcessor import extract_image
 from app.fileProcessors.pptxProcessor import extract_pptx
@@ -14,6 +14,9 @@ from app.fileProcessors.xlsProcessor import extract_xls
 
 # import chunker for step 3
 from app.chunking.chunker import chunk_documents
+
+# import sentence transformer model for step 4
+from app.embedding.embedder import embed_chunks
 
 
 def is_file_stable(file_path, wait_time=1.5, retries=3):
@@ -87,15 +90,18 @@ def process_file(file_path: str):
 
         print(f"{filename} → processing completed ✅")
         
+        # step 3 - chunking starts
         set_status(filename, "chunking")
         chunks = chunk_documents(documents)
-        
         print(f"{filename} → chunking completed ✅")
         print(f"Total chunks created: {len(chunks)}")
         
-        # 🔽 (Next Step Placeholder - Embedding)
-        # set_status(filename, "embedding")
-        # embed_chunks(chunks)
+        # step 4 - embedding starts
+        set_status(filename, "embedding")
+        embedded_data = embed_chunks(chunks)
+        print(f"{filename} → embedding completed ✅")
+        print(f"Total embeddings created: {len(embedded_data)}")
+        print(f"Sample embedding vector (first 5 values): {embedded_data[0]['embedding'][:5]}")
         
         set_status(filename, "success")
 
@@ -103,6 +109,8 @@ def process_file(file_path: str):
         set_status(filename, "failed", str(e))
         print(f"{filename} → failed ❌ ({e})")
 
+# ✅ global flag to singal frontend watcher is ready or not
+WATCHER_READY = False
 
 def start_watching():
     path = "docs"
@@ -111,6 +119,7 @@ def start_watching():
     observer.schedule(event_handler, path, recursive=True)
 
     observer.start()
+    WATCHER_READY = True
     print("👀 Watching for new files...")
 
     try:

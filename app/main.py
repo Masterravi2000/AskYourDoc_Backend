@@ -17,3 +17,8 @@ app.include_router(upload_images_router, prefix="/api")
 app.include_router(upload_pptx_router, prefix="/api")
 app.include_router(upload_txt_router, prefix="/api")
 app.include_router(upload_xls_router, prefix="/api")
+
+@app.get("/status")
+def get_status():
+    from app.workers.file_watcher import WATCHER_READY
+    return {"status": "ready" if WATCHER_READY else "loading"}
