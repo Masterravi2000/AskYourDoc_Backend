@@ -19,7 +19,7 @@ from app.chunking.chunker import chunk_documents
 from app.embedding.embedder import embed_chunks
 
 # import vector db for step 5
-from app.vectorstore.faiss_store import ( store_embeddings, save_metadata, save_to_disk, load_from_disk )
+from app.vectorstore.faiss_store import ( store_embeddings, save_metadata, load_from_disk, batchFills_save_to_disk )
 
 
 def is_file_stable(file_path, wait_time=1.5, retries=3):
@@ -110,7 +110,7 @@ def process_file(file_path: str):
         # step 5 - store in vector db
         store_embeddings(embedded_data)
         save_metadata(embedded_data)
-        save_to_disk() # persist it into memory 
+        batchFills_save_to_disk() # persist it into memory 
         print(f"{filename} → stored in FAISS ✅")
         
         set_status(filename, "success")
