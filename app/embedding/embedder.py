@@ -21,7 +21,9 @@ def embed_chunks(chunks):
 
     for i, chunk in enumerate(chunks):
         embedded_data.append({
-            "embedding": embeddings[i],
+            "id": chunk["id"],
+            "text": chunk["text"], 
+            "embedding": embeddings[i].tolist(),
             "metadata": chunk["metadata"]
         })
 

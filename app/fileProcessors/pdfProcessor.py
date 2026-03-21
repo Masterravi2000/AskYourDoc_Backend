@@ -1,6 +1,7 @@
 import fitz  # PyMuPDF
 import os
 from app.status_store import set_status
+from app.utils.text_cleaner import clean_and_normalize
 
 def extract_pdf(file_path: str) -> str:
     documents = []
@@ -11,7 +12,11 @@ def extract_pdf(file_path: str) -> str:
 
         with fitz.open(file_path) as doc:
             for page_num, page in enumerate(doc):
-                page_text = page.get_text().strip()
+                # 🔹 REFACTORED: separated raw extraction
+                raw_text = page.get_text("text")
+                
+                # 🔹 REFACTORED: applied cleaning + normalization
+                page_text = clean_and_normalize(raw_text)
                 
                 if page_text:
                     documents.append({

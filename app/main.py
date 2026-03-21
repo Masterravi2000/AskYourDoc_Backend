@@ -5,8 +5,18 @@ from app.controllers.uploadIMAGES.controller import router as upload_images_rout
 from app.controllers.uploadPPTX.controller import router as upload_pptx_router
 from app.controllers.uploadTXT.controller import router as upload_txt_router
 from app.controllers.uploadXLS.controller import router as upload_xls_router
+from app.routes.search_routes import router as search_router
+from app.vectorstore.faiss_store import load_from_disk
 
 app = FastAPI()
+
+@app.on_event("startup")
+def startup_event():
+    load_from_disk()
+    
+    import threading
+    from app.workers.file_watcher import start_watching
+    threading.Thread(target=start_watching, daemon=True).start()
 
 @app.get("/")
 def home():
@@ -17,6 +27,7 @@ app.include_router(upload_images_router, prefix="/api")
 app.include_router(upload_pptx_router, prefix="/api")
 app.include_router(upload_txt_router, prefix="/api")
 app.include_router(upload_xls_router, prefix="/api")
+app.include_router(search_router, prefix="/api")
 
 @app.get("/status")
 def get_status():

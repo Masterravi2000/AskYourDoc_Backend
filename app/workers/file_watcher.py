@@ -19,7 +19,7 @@ from app.chunking.chunker import chunk_documents
 from app.embedding.embedder import embed_chunks
 
 # import vector db for step 5
-from app.vectorstore.faiss_store import ( store_embeddings, save_metadata, load_from_disk, batchFills_save_to_disk )
+from app.vectorstore.faiss_store import ( store_embeddings, save_metadata, batchFills_save_to_disk )
 
 
 def is_file_stable(file_path, wait_time=1.5, retries=3):
@@ -90,8 +90,9 @@ def process_file(file_path: str):
             print(f"Unsupported file type: {file_path}")
             set_status(filename, "failed", "Unsupported file type")
             return
-
+        
         print(f"{filename} → processing completed ✅")
+        print(f"processed data {documents}")
         
         # step 3 - chunking starts
         set_status(filename, "chunking")
@@ -105,7 +106,8 @@ def process_file(file_path: str):
         print(f"{filename} → embedding completed ✅")
         print(f"Total embeddings created: {len(embedded_data)}")
         if embedded_data:
-            print(f"Sample embedding vector (first 5 values): {embedded_data[0]['embedding'][:5]}")
+            print("🔍 FINAL OUTPUT SAMPLE:")
+            print(embedded_data[0])
         
         # step 5 - store in vector db
         store_embeddings(embedded_data)
@@ -123,8 +125,7 @@ def process_file(file_path: str):
 def start_watching():
     global WATCHER_READY
     
-    # Load Existing Index
-    load_from_disk()
+    # clear_vector_db()
     
     path = "docs"
     event_handler = FileHandler()
