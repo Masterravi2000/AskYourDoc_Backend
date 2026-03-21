@@ -2,7 +2,7 @@
 
 ## 🧠 Offline AI-Powered Document Search Engine (Backend)
 
-AskYourDoc is a fully offline, high-performance document processing and semantic search backend that transforms multiple document formats into vector embeddings and enables accurate, context-aware retrieval using FAISS.
+AskYourDoc is a fully offline, high-performance document processing and semantic search system that transforms multiple document formats into vector embeddings and enables accurate, context-aware retrieval using FAISS.
 
 It is designed as a **modular, scalable pipeline** that processes documents end-to-end — from upload to intelligent search — without relying on any external APIs.
 
@@ -62,7 +62,7 @@ Upload → Extract → Clean → Normalize → Chunk → Embed → FAISS → Sea
 
 ## 📁 Project Structure
 
-
+```
 AskYourDoc_Backend/
 │
 ├── app/
@@ -76,7 +76,7 @@ AskYourDoc_Backend/
 │ │ ├── uploadTXT/
 │ │ │ └── controller.py
 │ │ ├── uploadXLS/
-│ │ └── controller.py
+│ │ │ └── controller.py
 │ │
 │ ├── fileProcessors/
 │ │ ├── pdfProcessor.py
@@ -120,7 +120,7 @@ AskYourDoc_Backend/
 ├── README.md
 └── requirements.txt
 
-
+```
 ---
 
 ## 🛠️ Tech Stack
@@ -246,7 +246,8 @@ Re-ranking
 Threshold tuning
 Frontend integration
 Advanced caching
-👤 Author
 
+
+👤 Author
 Ravi Sharma
 Full Stack developer
