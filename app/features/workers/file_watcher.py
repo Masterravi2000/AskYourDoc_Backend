@@ -3,7 +3,7 @@ import os
 import threading
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
-from app.repositories import set_status
+from app.repositories.status_store_repository import set_status
 
 # Import processors for step 2
 from app.features.fileProcessors.pdfProcessor import extract_pdf
@@ -19,8 +19,9 @@ from app.features.chunking.chunker import chunk_documents
 from app.features.embedding.embedder import embed_chunks
 
 # import vector db for step 5
-from app.repositories import ( store_embeddings, save_metadata, batchFills_save_to_disk )
+from app.repositories.faiss_store_repository import ( store_embeddings, save_metadata, batchFills_save_to_disk )
 
+WATCHER_READY = False
 
 def is_file_stable(file_path, wait_time=1.5, retries=3):
     """Check if file size is stable"""

@@ -1,21 +1,19 @@
 from fastapi import FastAPI
-import os
+import threading
 from app.controllers.uploadFile.uploadPDF.upload_pdf_route import router as upload_pdf_router
 from app.controllers.uploadFile.uploadIMAGES.upload_images_route import router as upload_images_router
 from app.controllers.uploadFile.uploadPPTX.upload_pptx_route import router as upload_pptx_router
-from app.services.uploadFiles.uploadTXT import router as upload_txt_router
-from app.services.uploadFiles.uploadXLS import router as upload_xls_router
-from app.features.search.search import router as search_router
-from app.repositories import load_from_disk
+from app.controllers.uploadFile.uploadTXT.upload_txt_route import router as upload_txt_router
+from app.controllers.uploadFile.uploadXLS.upload_xls_route import router as upload_xls_router
+from app.controllers.search.search_routes import router as search_router
+from app.features.workers.file_watcher import start_watching, WATCHER_READY
+from app.repositories.faiss_store_repository import load_from_disk
 
 app = FastAPI()
 
 @app.on_event("startup")
 def startup_event():
     load_from_disk()
-    
-    import threading
-    from app.features.workers.file_watcher import start_watching
     threading.Thread(target=start_watching, daemon=True).start()
 
 @app.get("/")
@@ -31,5 +29,4 @@ app.include_router(search_router, prefix="/api")
 
 @app.get("/status")
 def get_status():
-    from app.features.workers.file_watcher import WATCHER_READY
     return {"status": "ready" if WATCHER_READY else "loading"}

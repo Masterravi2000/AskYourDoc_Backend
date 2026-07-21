@@ -3,6 +3,6 @@ from app.services.uploadFiles.uploadIMAGES.upload_images_service import upload_i
 
 router = APIRouter()
 
-@router.post("upload/images")
+@router.post("/upload/images")
 async def upload_images_route(files: list[UploadFile] = File(...)) :
     return await upload_images(files)

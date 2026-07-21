@@ -1,5 +1,5 @@
 import os
-from app.repositories import set_status
+from app.repositories.status_store_repository import set_status
 
 def extract_txt(file_path: str) -> str:
     filename = os.path.basename(file_path)
