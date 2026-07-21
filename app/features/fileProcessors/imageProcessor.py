@@ -2,7 +2,7 @@ from PIL import Image
 import pytesseract
 import os
 import sys
-from app.repositories import set_status 
+from app.repositories.status_store_repository import set_status 
 
 def get_tesseract_path():
     if getattr(sys, 'frozen', False):  

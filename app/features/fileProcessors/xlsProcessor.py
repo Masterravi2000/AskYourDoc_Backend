@@ -1,5 +1,5 @@
 import pandas as pd
-from app.repositories import set_status
+from app.repositories.status_store_repository import set_status
 import os
 
 def extract_xls(file_path: str) -> str:

@@ -1,6 +1,6 @@
 from pptx import Presentation
 import os
-from app.repositories import set_status 
+from app.repositories.status_store_repository import set_status 
 
 def extract_pptx(file_path: str) -> str:
     documents = []

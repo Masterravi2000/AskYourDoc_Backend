@@ -1,5 +1,5 @@
 from fastapi import UploadFile
-from app.repositories import set_status
+from app.repositories.status_store_repository import set_status
 import os
 
 

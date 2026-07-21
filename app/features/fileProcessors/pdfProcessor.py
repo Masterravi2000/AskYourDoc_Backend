@@ -1,6 +1,6 @@
 import fitz  # PyMuPDF
 import os
-from app.repositories import set_status
+from app.repositories.status_store_repository import set_status
 from app.utils.text_cleaner import clean_and_normalize
 
 def extract_pdf(file_path: str) -> str:

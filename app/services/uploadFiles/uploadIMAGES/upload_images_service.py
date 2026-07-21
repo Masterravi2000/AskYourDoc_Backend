@@ -1,6 +1,6 @@
 from fastapi import UploadFile
 import os
-from app.repositories import set_status
+from app.repositories.status_store_repository import set_status
 
 os.makedirs("docs/images", exist_ok=True)
 

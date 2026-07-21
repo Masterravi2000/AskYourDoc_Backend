@@ -1,13 +1,11 @@
-from fastapi import APIRouter, UploadFile, File
+from fastapi import UploadFile
 import os
-from app.repositories import set_status
+from app.repositories.status_store_repository import set_status
 
-router = APIRouter()
 
 os.makedirs("docs/xls", exist_ok=True)
 
-@router.post("/upload/xls")
-async def upload_xls(files: list[UploadFile] = File(...)):
+async def upload_xls(files: list[UploadFile]):
     uploaded_files = []
     failed_files = []
 
