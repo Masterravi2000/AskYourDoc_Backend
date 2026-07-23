@@ -27,7 +27,7 @@ current_batch_count = 0
 
 def store_embeddings(embedded_data):
     global current_batch_count
-    vectors = [item["embedding"] for item in embedded_data]
+    vectors = [item["vector"] for item in embedded_data]
     vectors = np.array(vectors).astype("float32")
     
     with lock:

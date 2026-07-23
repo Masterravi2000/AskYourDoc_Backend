@@ -1,5 +1,5 @@
 from app.features.embedding.embedder import model
-import app.repositories as faiss_store
+import app.repositories.faiss_store_repository as faiss_store
 import numpy as np
 
 

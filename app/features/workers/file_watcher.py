@@ -4,6 +4,7 @@ import threading
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 from app.repositories.status_store_repository import set_status
+from app.repositories.lancedb_repository import insert_embeddings
 
 # Import processors for step 2
 from app.features.fileProcessors.pdfProcessor import extract_pdf
@@ -115,6 +116,9 @@ def process_file(file_path: str):
         save_metadata(embedded_data)
         batchFills_save_to_disk() # persist it into memory 
         print(f"{filename} → stored in FAISS ✅")
+        # step 5 - store in vector db
+        insert_embeddings(embedded_data)
+        print(f"{filename} → stored in LanceDB ✅")
         
         set_status(filename, "success")
 

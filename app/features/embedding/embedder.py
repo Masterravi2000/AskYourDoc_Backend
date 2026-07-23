@@ -8,14 +8,14 @@ model = SentenceTransformer("all-MiniLM-L12-v2")
 
 def embed_chunks(chunks):
     """
-    chunks: [{ "text": str, "metadata": {...} }]
-    returns: [{ "embedding": vector, "metadata": {...} }]
+    chunks: [{ "id": str, "text": str, "metadata": {...} }]
+    returns: [{ "id": str, "text": str, "vector": vector, "metadata": {...} }]
     """
 
     texts = [chunk["text"] for chunk in chunks]
 
     # 🔥 Convert text → vectors
-    embeddings = model.encode(texts, show_progress_bar=False)
+    vectors = model.encode(texts, show_progress_bar=False)
 
     embedded_data = []
 
@@ -23,7 +23,7 @@ def embed_chunks(chunks):
         embedded_data.append({
             "id": chunk["id"],
             "text": chunk["text"], 
-            "embedding": embeddings[i].tolist(),
+            "vector": vectors[i].tolist(),
             "metadata": chunk["metadata"]
         })
 
