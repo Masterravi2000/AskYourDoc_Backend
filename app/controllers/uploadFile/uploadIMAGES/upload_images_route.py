@@ -5,4 +5,5 @@ router = APIRouter()
 
 @router.post("/upload/images")
 async def upload_images_route(files: list[UploadFile] = File(...)) :
+    print("✅ Route reached")
     return await upload_images(files)
