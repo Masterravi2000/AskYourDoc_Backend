@@ -1,5 +1,6 @@
 from app.features.embedding.embedder import model
 from app.repositories.lancedb_repository import table
+from app.features.search.hybrid_search import hybrid_filter
 
 
 def search_query(query: str, k: int = 5):
@@ -30,5 +31,8 @@ def search_query(query: str, k: int = 5):
             "line_start": row["line_start"],
             "line_end": row["line_end"]
         })
+    
+    # Step 4: Hybrid Search
+    filtered_result = hybrid_filter(query, formatted_results)
 
-    return formatted_results
+    return filtered_result
