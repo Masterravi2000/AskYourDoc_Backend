@@ -42,3 +42,10 @@ def insert_embeddings(records):
         })
 
     table.add(flattened_records)
+    
+def inspect_vector_db():
+    print("Total records available on LanceDB - ", table.count_rows())
+    # print("Example of an record - ", table.to_arrow().to_pylist()[:3])
+
+# def clear_lancedb():
+#     table.delete("true")

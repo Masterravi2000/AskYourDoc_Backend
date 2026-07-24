@@ -7,14 +7,12 @@ from app.controllers.uploadFile.uploadTXT.upload_txt_route import router as uplo
 from app.controllers.uploadFile.uploadXLS.upload_xls_route import router as upload_xls_router
 from app.controllers.search.search_routes import router as search_router
 from app.features.workers.file_watcher import start_watching, WATCHER_READY
-from app.repositories.faiss_store_repository import load_from_disk
 from app.repositories.lancedb_repository import db
 
 app = FastAPI()
 
 @app.on_event("startup")
 def startup_event():
-    load_from_disk()
     threading.Thread(target=start_watching, daemon=True).start()
 
 @app.get("/")

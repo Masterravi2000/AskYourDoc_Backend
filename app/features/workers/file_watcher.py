@@ -4,7 +4,6 @@ import threading
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 from app.repositories.status_store_repository import set_status
-from app.repositories.lancedb_repository import insert_embeddings
 
 # Import processors for step 2
 from app.features.fileProcessors.pdfProcessor import extract_pdf
@@ -20,7 +19,7 @@ from app.features.chunking.chunker import chunk_documents
 from app.features.embedding.embedder import embed_chunks
 
 # import vector db for step 5
-from app.repositories.faiss_store_repository import ( store_embeddings, save_metadata, batchFills_save_to_disk )
+from app.repositories.lancedb_repository import insert_embeddings, inspect_vector_db
 
 WATCHER_READY = False
 
@@ -94,28 +93,23 @@ def process_file(file_path: str):
             return
         
         print(f"{filename} → processing completed ✅")
-        print(f"processed data {documents}")
+        # print(f"processed data {documents}")
         
         # step 3 - chunking starts
         set_status(filename, "chunking")
         chunks = chunk_documents(documents)
         print(f"{filename} → chunking completed ✅")
-        print(f"Total chunks created: {len(chunks)}")
+        # print(f"Total chunks created: {len(chunks)}")
         
         # step 4 - embedding starts
         set_status(filename, "embedding")
         embedded_data = embed_chunks(chunks)
         print(f"{filename} → embedding completed ✅")
-        print(f"Total embeddings created: {len(embedded_data)}")
-        if embedded_data:
-            print("🔍 FINAL OUTPUT SAMPLE:")
-            print(embedded_data[0])
+        # print(f"Total embeddings created: {len(embedded_data)}")
+        # if embedded_data:
+        #     print("🔍 FINAL OUTPUT SAMPLE:")
+        #     print(embedded_data[0])
         
-        # step 5 - store in vector db
-        store_embeddings(embedded_data)
-        save_metadata(embedded_data)
-        batchFills_save_to_disk() # persist it into memory 
-        print(f"{filename} → stored in FAISS ✅")
         # step 5 - store in vector db
         insert_embeddings(embedded_data)
         print(f"{filename} → stored in LanceDB ✅")
@@ -130,7 +124,8 @@ def process_file(file_path: str):
 def start_watching():
     global WATCHER_READY
     
-    # clear_vector_db()
+    inspect_vector_db()
+    # clear_lancedb()
     
     path = "docs"
     event_handler = FileHandler()

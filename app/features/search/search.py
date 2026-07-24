@@ -1,37 +1,34 @@
 from app.features.embedding.embedder import model
-import app.repositories.faiss_store_repository as faiss_store
-import numpy as np
+from app.repositories.lancedb_repository import table
 
 
 def search_query(query: str, k: int = 5):
     # 🔹 Step 1: Embed query
-    query_vector = model.encode([query])
-    query_vector = np.array(query_vector).astype("float32")
+    query_vector = model.encode(query).tolist()
 
     # 🔹 Step 2: Search FAISS
-    D, I = faiss_store.index.search(query_vector, k)
-
-    results = []
+    results = (
+        table.search(query_vector)
+        .limit(k)
+        .to_list()
+    )
 
     # 🔹 Step 3: Map results
-    for i, idx in enumerate(I[0]):
-        if idx == -1:
-            continue
+    formatted_results = []
+    
+    for row in results:
+        formatted_results.append({
+            "content": row["text"],
+            "score": row["_distance"],
 
-        chunk = faiss_store.metadata_store[idx]
+            "file_name": row["file_name"],
+            "file_type": row["file_type"],
 
-        results.append({
-            "content": chunk["text"],
-            "score": float(D[0][i]),
+            "page_number": row["page_number"],
+            "slide_number": row["slide_number"],
 
-            "file_name": chunk["metadata"]["file_name"],
-            "file_type": chunk["metadata"]["file_type"],
-
-            "page_number": chunk["metadata"]["page_number"],
-            "slide_number": chunk["metadata"]["slide_number"],
-
-            "line_start": chunk["metadata"]["line_start"],
-            "line_end": chunk["metadata"]["line_end"]
+            "line_start": row["line_start"],
+            "line_end": row["line_end"]
         })
 
-    return results
+    return formatted_results
