@@ -74,6 +74,9 @@ def process_file(file_path: str):
         set_status(filename, "chunking")
 
         chunks = chunk_documents(documents)
+        for i, chunk in enumerate(chunks):
+           print(f"\nChunk {i}")
+           print(chunk["text"])
 
         print(f"{filename} → chunking completed ✅")
 

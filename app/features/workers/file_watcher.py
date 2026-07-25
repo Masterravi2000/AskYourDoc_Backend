@@ -5,7 +5,7 @@ from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
 from app.repositories.status_store_repository import set_status
-from app.repositories.lancedb_repository import inspect_vector_db, clear_lancedb
+from app.repositories.lancedb_repository import inspect_vector_db
 
 # Import Queue
 from app.features.workers.worker_pool import task_queue
@@ -75,9 +75,9 @@ class FileHandler(FileSystemEventHandler):
 def start_watching():
 
     global WATCHER_READY
-
+    
+    # clear_lancedb()
     inspect_vector_db()
-    clear_lancedb()
 
     path = "docs"
 
