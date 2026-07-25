@@ -33,7 +33,6 @@ def extract_pptx(file_path: str) -> str:
                     }
                 })
                 
-        set_status(filename, "processed")
         
     except Exception as e:
         set_status(filename, "failed", str(e))

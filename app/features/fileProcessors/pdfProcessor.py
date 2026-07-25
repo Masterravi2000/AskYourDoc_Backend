@@ -27,8 +27,6 @@ def extract_pdf(file_path: str) -> str:
                             "page": page_num + 1
                         }
                     })
-        
-        set_status(filename, "processed")
 
     except Exception as e:
         set_status(filename, "failed", str(e))

@@ -21,7 +21,6 @@ def extract_txt(file_path: str) -> str:
                     }
                 })
             
-        set_status(filename, "processed")
 
         return documents
     

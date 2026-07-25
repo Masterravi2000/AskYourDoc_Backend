@@ -36,9 +36,6 @@ def extract_image(file_path: str) -> str:
                     }
                 })
             
-            # set done status
-            set_status(filename, "processed")
-            
         return documents
     
     except Exception as e:

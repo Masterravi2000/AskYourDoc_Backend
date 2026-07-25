@@ -1,6 +1,7 @@
 # app/embedding/embedder.py
 
 from sentence_transformers import SentenceTransformer
+from app.repositories.status_store_repository import set_status
 
 # ✅ Load model once (global - avoids reloading every time)
 model = SentenceTransformer("all-MiniLM-L12-v2")
@@ -12,6 +13,10 @@ def embed_chunks(chunks):
     returns: [{ "id": str, "text": str, "vector": vector, "metadata": {...} }]
     """
     # start = time.perf_counter()
+    
+    # set status
+    filename = chunks[0]["metadata"]["file_name"]
+    set_status(filename, "embedding")
 
     texts = [chunk["text"] for chunk in chunks]
 

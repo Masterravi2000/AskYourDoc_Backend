@@ -30,7 +30,6 @@ def extract_xls(file_path: str) -> str:
                     }
                 })
 
-        set_status(filename, "processed")
         
     except Exception as e:
         set_status(filename, "failed", str(e))

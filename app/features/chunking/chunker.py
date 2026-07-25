@@ -1,6 +1,7 @@
 # app/chunking/chunker.py
 
 from typing import List, Dict
+from app.repositories.status_store_repository import set_status
 import re
 
 
@@ -11,6 +12,10 @@ def chunk_documents(
 ) -> List[Dict]:
 
     # start = time.perf_counter()
+    
+    #set status
+    filename = documents[0]["metadata"]["file_name"]
+    set_status(filename, "chunking")
 
     chunks = []
     chunk_id = 0

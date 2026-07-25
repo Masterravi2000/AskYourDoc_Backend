@@ -1,6 +1,7 @@
 import lancedb
 import pyarrow as pa
 import time
+from app.repositories.status_store_repository import set_status
 
 db = lancedb.connect("NexDoc_DB")
 
@@ -27,7 +28,9 @@ table = db.create_table(
 def insert_embeddings(records):
     flattened_records = []
     
-    start = time.perf_counter()
+    # start = time.perf_counter()
+    filename = records[0]["metadata"]["file_name"]
+    set_status(filename, "storing")
 
     for record in records:
         metadata = record["metadata"]
@@ -48,11 +51,12 @@ def insert_embeddings(records):
 
     table.add(flattened_records)
     
-    print(f"[LanceDB Storage] Completed in {time.perf_counter() - start:.3f} sec")
+    set_status(filename, "completed")
+    # print(f"[LanceDB Storage] Completed in {time.perf_counter() - start:.3f} sec")
     
 def inspect_vector_db():
     print("Total records available on LanceDB - ", table.count_rows())
     # print("Example of an record - ", table.to_arrow().to_pylist()[:3])
 
-# def clear_lancedb():
-#     table.delete("true")
+def clear_lancedb():
+    table.delete("true")
