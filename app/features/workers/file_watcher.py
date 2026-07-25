@@ -66,6 +66,7 @@ class FileHandler(FileSystemEventHandler):
 
 
 def process_file(file_path: str):
+    # pipeline_start = time.perf_counter()
     filename = os.path.basename(file_path)
     ext = os.path.splitext(file_path)[1].lower()
     
@@ -115,6 +116,8 @@ def process_file(file_path: str):
         print(f"{filename} → stored in LanceDB ✅")
         
         set_status(filename, "success")
+        
+        # print(f"[Total Pipeline] Completed in {time.perf_counter() - pipeline_start:.3f} sec")
 
     except Exception as e:
         set_status(filename, "failed", str(e))

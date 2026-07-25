@@ -10,6 +10,8 @@ def chunk_documents(
     overlap: int = 100
 ) -> List[Dict]:
 
+    # start = time.perf_counter()
+
     chunks = []
     chunk_id = 0
 
@@ -65,6 +67,9 @@ def chunk_documents(
         if current_chunk.strip():
             chunks.append(_create_chunk(current_chunk, metadata, chunk_id))
             chunk_id += 1
+    
+    # print(f"Total chunks created: {len(chunks)}")
+    # print(f"[Chunking] Completed in {time.perf_counter() - start:.3f} sec")
 
     return chunks
 
@@ -76,19 +81,21 @@ def _create_chunk(text: str, metadata: Dict, chunk_id: int) -> Dict:
     chunk_metadata = {
         "file_name": metadata.get("file_name"),
         "file_type": file_type,
-        "page_number": None if file_type == "pptx" else metadata.get("page"),
+        "page_number": metadata.get("page") if file_type == "pdf" else None,
         "slide_number": metadata.get("page") if file_type == "pptx" else None,
+        "sheet_name": metadata.get("page") if file_type == "xls" else None,
         "line_start": None,
         "line_end": None
     }
 
-    print(f"\n🔹 Chunk ID: {chunk_id}")
-    print(f"Text Preview: {text[:150]}...")
-    print(f"Metadata: {chunk_metadata}")
-    print("-" * 50)
+    # print(f"\n🔹 Chunk ID: {chunk_id}")
+    # print(f"Text Preview: {text[:150]}...")
+    # print(f"Metadata: {chunk_metadata}")
+    # print("-" * 50)
 
     return {
         "id": f"chunk_{chunk_id}",
         "text": text.strip(),
         "metadata": chunk_metadata
     }
+    

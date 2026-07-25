@@ -13,6 +13,8 @@ async def upload_xls(files: list[UploadFile]):
         file_path = f"docs/xls/{file.filename}"
 
         try:
+            print(repr(file.filename))
+
             # file type check
             if not file.filename.lower().endswith((".xls", ".xlsx")):
                 raise Exception("Invalid file type")

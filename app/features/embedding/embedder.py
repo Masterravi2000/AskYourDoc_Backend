@@ -11,11 +11,14 @@ def embed_chunks(chunks):
     chunks: [{ "id": str, "text": str, "metadata": {...} }]
     returns: [{ "id": str, "text": str, "vector": vector, "metadata": {...} }]
     """
+    # start = time.perf_counter()
 
     texts = [chunk["text"] for chunk in chunks]
 
     # 🔥 Convert text → vectors
     vectors = model.encode(texts, show_progress_bar=False)
+    
+    # elapsed = time.perf_counter() - start
 
     embedded_data = []
 
@@ -26,5 +29,9 @@ def embed_chunks(chunks):
             "vector": vectors[i].tolist(),
             "metadata": chunk["metadata"]
         })
+    
+    # print(f"Total embeddings: {len(embedded_data)}")
+    # print(f"[Embedding] Completed in {elapsed:.3f} sec")
+    # print(f"Time per chunk: {elapsed / len(embedded_data):.3f} sec")
 
     return embedded_data

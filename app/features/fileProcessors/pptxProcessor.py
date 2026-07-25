@@ -1,11 +1,14 @@
 from pptx import Presentation
 import os
+import time
 from app.repositories.status_store_repository import set_status 
 
 def extract_pptx(file_path: str) -> str:
     documents = []
     filename = os.path.basename(file_path)
-
+    
+    # start = time.perf_counter()
+    
     try:
         set_status(filename, "processing")
         
@@ -40,5 +43,7 @@ def extract_pptx(file_path: str) -> str:
             os.remove(file_path)
             
         raise Exception(f"PPTX processing failed: {str(e)}")
-
+    
+    # print(f"[Extraction] Completed in {time.perf_counter() - start:.3f} sec")
+    
     return documents
