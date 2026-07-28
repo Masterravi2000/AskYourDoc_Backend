@@ -2,13 +2,13 @@ import pandas as pd
 from app.repositories.status_store_repository import set_status
 import os
 
-def extract_xls(file_path: str) -> str:
+def extract_xls(fileId, file_path: str) -> str:
     documents = []
     filename = os.path.basename(file_path)
 
     try:
         # set current status
-        set_status(filename, "processing")
+        set_status(fileId, filename, "processing")
         
         # Select engine based on file extension
         if file_path.endswith(".xls"):
@@ -32,7 +32,7 @@ def extract_xls(file_path: str) -> str:
 
         
     except Exception as e:
-        set_status(filename, "failed", str(e))
+        set_status(fileId, filename, "failed", str(e))
         print(f"{filename} → failed ❌ ({e})")
         
         if os.path.exists(file_path):

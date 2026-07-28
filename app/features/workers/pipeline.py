@@ -31,7 +31,7 @@ import os
 #      ↓
 # LanceDB Storage
 # ==========================================================
-def process_file(file_path: str):
+def process_file(fileId: str, file_path: str):
 
     filename = os.path.basename(file_path)
     ext = os.path.splitext(file_path)[1].lower()
@@ -45,23 +45,23 @@ def process_file(file_path: str):
         # --------------------------------------------------
 
         if ext == ".pdf":
-            documents = extract_pdf(file_path)
+            documents = extract_pdf(fileId, file_path)
 
         elif ext in [".png", ".jpg", ".jpeg"]:
-            documents = extract_image(file_path)
+            documents = extract_image(fileId, file_path)
 
         elif ext == ".pptx":
-            documents = extract_pptx(file_path)
+            documents = extract_pptx(fileId, file_path)
 
         elif ext == ".txt":
-            documents = extract_txt(file_path)
+            documents = extract_txt(fileId, file_path)
 
         elif ext in [".xls", ".xlsx"]:
-            documents = extract_xls(file_path)
+            documents = extract_xls(fileId, file_path)
 
         else:
             print(f"Unsupported file type: {file_path}")
-            set_status(filename, "failed", "Unsupported file type")
+            set_status(fileId, filename, "failed", "Unsupported file type")
             return
 
         print(f"{filename} → processing completed ✅")
@@ -70,13 +70,9 @@ def process_file(file_path: str):
         # --------------------------------------------------
         # STEP 2 : Chunking
         # --------------------------------------------------
+        
 
-        set_status(filename, "chunking")
-
-        chunks = chunk_documents(documents)
-        for i, chunk in enumerate(chunks):
-           print(f"\nChunk {i}")
-           print(chunk["text"])
+        chunks = chunk_documents(fileId, documents)
 
         print(f"{filename} → chunking completed ✅")
 
@@ -84,10 +80,9 @@ def process_file(file_path: str):
         # --------------------------------------------------
         # STEP 3 : Embedding
         # --------------------------------------------------
+        
 
-        set_status(filename, "embedding")
-
-        embedded_data = embed_chunks(chunks)
+        embedded_data = embed_chunks(fileId, chunks)
 
         print(f"{filename} → embedding completed ✅")
 
@@ -96,7 +91,7 @@ def process_file(file_path: str):
         # STEP 4 : Store in LanceDB
         # --------------------------------------------------
 
-        insert_embeddings(embedded_data)
+        insert_embeddings(fileId, embedded_data)
 
         print(f"{filename} → stored in LanceDB ✅")
 
@@ -105,10 +100,10 @@ def process_file(file_path: str):
         # STEP 5 : Mark Completed
         # --------------------------------------------------
 
-        set_status(filename, "completed")
+        set_status(fileId, filename, "completed")
 
     except Exception as e:
 
-        set_status(filename, "failed", str(e))
+        set_status(fileId, filename, "failed", str(e))
 
         print(f"{filename} → failed ❌ ({e})")

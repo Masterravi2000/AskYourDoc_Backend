@@ -1,7 +1,8 @@
 from fastapi import UploadFile
 import os
 from app.repositories.status_store_repository import set_status
-
+from uuid import uuid4
+from app.features.workers.worker_pool import task_queue
 
 os.makedirs("docs/xls", exist_ok=True)
 
@@ -10,6 +11,7 @@ async def upload_xls(files: list[UploadFile]):
     failed_files = []
 
     for file in files:
+        fileId = str(uuid4())
         file_path = f"docs/xls/{file.filename}"
 
         try:
@@ -26,9 +28,19 @@ async def upload_xls(files: list[UploadFile]):
             with open(file_path, "wb") as f:
                 f.write(await file.read())
 
-            uploaded_files.append(file.filename)
+            uploaded_files.append({
+                "fileId": fileId,
+                "filename": file.filename
+            })
             
-            set_status(file.filename, "uploaded")
+            # set status to queued
+            set_status(fileId, file.filename, "queued")
+            
+            # push both id and file path into task_queue
+            task_queue.put({
+                "fileId": fileId,
+                "filePath": file_path
+            })
 
         except Exception as e:
              if os.path.exists(file_path):
@@ -39,11 +51,10 @@ async def upload_xls(files: list[UploadFile]):
                 "error": str(e)
              })
             
-             set_status(file.filename, "failed", str(e))
+             set_status(fileId, file.filename, "failed", str(e))
              print(f"{file.filename} → failed ❌ ({e})")
 
     return {
         "uploaded_files": uploaded_files,
         "failed_files": failed_files,
-        "status": "completed"
     }

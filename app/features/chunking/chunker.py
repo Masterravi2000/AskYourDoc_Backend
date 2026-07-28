@@ -6,6 +6,7 @@ import re
 
 
 def chunk_documents(
+    fileId: str,
     documents: List[Dict],
     chunk_size: int = 500,
     overlap: int = 100
@@ -15,7 +16,7 @@ def chunk_documents(
     
     #set status
     filename = documents[0]["metadata"]["file_name"]
-    set_status(filename, "chunking")
+    set_status(fileId, filename, "chunking")
 
     chunks = []
     chunk_id = 0

@@ -25,12 +25,12 @@ table = db.create_table(
     exist_ok=True
 )
 
-def insert_embeddings(records):
+def insert_embeddings(fileId: str, records):
     flattened_records = []
     
     # start = time.perf_counter()
     filename = records[0]["metadata"]["file_name"]
-    set_status(filename, "storing")
+    set_status(fileId, filename, "storing")
 
     for record in records:
         metadata = record["metadata"]
@@ -51,7 +51,6 @@ def insert_embeddings(records):
 
     table.add(flattened_records)
     
-    set_status(filename, "completed")
     # print(f"[LanceDB Storage] Completed in {time.perf_counter() - start:.3f} sec")
     
 def inspect_vector_db():

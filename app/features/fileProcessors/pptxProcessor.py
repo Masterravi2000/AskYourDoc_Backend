@@ -3,14 +3,14 @@ import os
 import time
 from app.repositories.status_store_repository import set_status 
 
-def extract_pptx(file_path: str) -> str:
+def extract_pptx(fileId: str, file_path: str) -> str:
     documents = []
     filename = os.path.basename(file_path)
     
     # start = time.perf_counter()
     
     try:
-        set_status(filename, "processing")
+        set_status(fileId, filename, "processing")
         
         prs = Presentation(file_path)
 
@@ -35,7 +35,7 @@ def extract_pptx(file_path: str) -> str:
                 
         
     except Exception as e:
-        set_status(filename, "failed", str(e))
+        set_status(fileId, filename, "failed", str(e))
         print(f"{filename} → failed ❌ ({e})")
         
         if os.path.exists(file_path):

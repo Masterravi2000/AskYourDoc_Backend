@@ -15,13 +15,13 @@ def get_tesseract_path():
 # pytesseract.pytesseract.tesseract_cmd = get_tesseract_path()
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 
-def extract_image(file_path: str) -> str:
+def extract_image(fileId: str, file_path: str) -> str:
     filename = os.path.basename(file_path)
     documents = []
     
     try:
         # set current status
-        set_status(filename, "processing")
+        set_status(fileId, filename, "processing")
         
         with Image.open(file_path) as img:
             text = pytesseract.image_to_string(img).strip()
@@ -40,7 +40,7 @@ def extract_image(file_path: str) -> str:
     
     except Exception as e:
         # set failed status
-        set_status(filename, "failed", str(e))
+        set_status(fileId, filename, "failed", str(e))
         # print failed status
         print(f"{filename} → failed ❌ ({e})")
         

@@ -3,12 +3,12 @@ import os
 from app.repositories.status_store_repository import set_status
 from app.utils.text_cleaner import clean_and_normalize
 
-def extract_pdf(file_path: str) -> str:
+def extract_pdf(fileId: str, file_path: str) -> str:
     documents = []
     filename = os.path.basename(file_path)
 
     try:
-        set_status(filename, "processing")
+        set_status(fileId, filename, "processing")
 
         with fitz.open(file_path) as doc:
             for page_num, page in enumerate(doc):
@@ -29,7 +29,7 @@ def extract_pdf(file_path: str) -> str:
                     })
 
     except Exception as e:
-        set_status(filename, "failed", str(e))
+        set_status(fileId, filename, "failed", str(e))
         print(f"{filename} → failed ❌ ({e})") 
         
         if os.path.exists(file_path):

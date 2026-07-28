@@ -12,7 +12,7 @@ from app.features.workers.pipeline import process_file
 # Workers consume tasks from this queue.
 # ==========================================================
 
-task_queue: Queue[str] = Queue()   # optional type hint (Python 3.9+)
+task_queue: Queue[dict] = Queue()   # optional type hint (Python 3.9+)
 
 # ==========================================================
 # WORKER
@@ -32,13 +32,16 @@ def worker():
      while True:
          
          # Wait untill a task is available 
-         file_path = task_queue.get()
+         task = task_queue.get()
+         
+         fileId = task["fileId"]
+         filePath = task["filePath"]
          
          try:
              
-             print(f"[Worker] Processing : {file_path}")
+             print(f"[Worker] Processing : {filePath}")
              
-             process_file(file_path)
+             process_file(fileId, filePath)
         
          except Exception as e:
              

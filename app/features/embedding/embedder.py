@@ -7,7 +7,7 @@ from app.repositories.status_store_repository import set_status
 model = SentenceTransformer("all-MiniLM-L12-v2")
 
 
-def embed_chunks(chunks):
+def embed_chunks(fileId: str, chunks):
     """
     chunks: [{ "id": str, "text": str, "metadata": {...} }]
     returns: [{ "id": str, "text": str, "vector": vector, "metadata": {...} }]
@@ -16,7 +16,7 @@ def embed_chunks(chunks):
     
     # set status
     filename = chunks[0]["metadata"]["file_name"]
-    set_status(filename, "embedding")
+    set_status(fileId, filename, "embedding")
 
     texts = [chunk["text"] for chunk in chunks]
 

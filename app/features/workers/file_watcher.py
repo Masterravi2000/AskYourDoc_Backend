@@ -1,14 +1,8 @@
 import time
 import os
-
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
-
-from app.repositories.status_store_repository import set_status
-from app.repositories.lancedb_repository import inspect_vector_db
-
-# Import Queue
-from app.features.workers.worker_pool import task_queue
+from app.repositories.lancedb_repository import inspect_vector_db, clear_lancedb
 
 WATCHER_READY = False
 
@@ -59,13 +53,13 @@ class FileHandler(FileSystemEventHandler):
             print(f"File not stable, skipping : {file_path}")
             return
 
-        # Mark file as queued
-        set_status(filename, "queued")
+        # # Mark file as queued
+        # set_status(filename, "queued")
 
-        # Push into queue
-        task_queue.put(file_path)
+        # # Push into queue
+        # task_queue.put(file_path)
 
-        print(f"{filename} added to processing queue")
+        # print(f"{filename} added to processing queue")
 
 
 # ==========================================================
