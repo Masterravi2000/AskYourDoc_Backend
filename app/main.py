@@ -10,8 +10,20 @@ from app.controllers.status.status_route import router as status_router
 from app.features.workers.file_watcher import start_watching
 import app.features.workers.file_watcher as file_watcher
 from app.features.workers.worker_pool import start_worker_pool
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
 
 @app.on_event("startup")
 def startup_event():

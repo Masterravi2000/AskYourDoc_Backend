@@ -14,6 +14,8 @@ def set_status(fileId: str, filename: str, status: str, error: str = None):
 
 def get_status(fileId: str):
     with _lock:
+        print(fileId)
+        print(_status_store)
         return _status_store.get(fileId, {"status": "not_found", "error": None})
 
 def get_all_status():

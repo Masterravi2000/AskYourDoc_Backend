@@ -53,14 +53,6 @@ class FileHandler(FileSystemEventHandler):
             print(f"File not stable, skipping : {file_path}")
             return
 
-        # # Mark file as queued
-        # set_status(filename, "queued")
-
-        # # Push into queue
-        # task_queue.put(file_path)
-
-        # print(f"{filename} added to processing queue")
-
 
 # ==========================================================
 # START WATCHDOG
