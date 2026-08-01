@@ -23,7 +23,7 @@ async def upload_pdfs(files: list[UploadFile]):
 
             # Duplicate check
             if os.path.exists(file_path):
-                raise Exception("Given PDF file already exists")
+                raise FileExistsError("Given PDF file already exists")
 
             with open(file_path, "wb") as f:
                 f.write(await file.read())
@@ -41,6 +41,15 @@ async def upload_pdfs(files: list[UploadFile]):
                 "fileId": fileId,
                 "filePath": file_path
             })
+            
+        except FileExistsError as e:
+            failed_files.append({
+                "filename": file.filename,
+                "error": str(e)
+            })
+
+            set_status(fileId, file.filename, "failed", str(e))
+            print(f"{file.filename} → failed ❌ ({e})")
 
         except Exception as e:
             if os.path.exists(file_path):

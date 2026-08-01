@@ -22,7 +22,7 @@ def get_all_status():
     with _lock:
         return _status_store.copy()
 
-def delete_status(filename: str):
+def delete_status(fileId: str):
     with _lock:
-        if filename in _status_store:
-            del _status_store[filename]
+        if fileId in _status_store:
+            del _status_store[fileId]

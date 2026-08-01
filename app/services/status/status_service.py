@@ -5,6 +5,7 @@ def fetch_status(fileId: str) -> StatusResponse:
     status=get_status(fileId)
     
     return StatusResponse(
+        filename=status["filename"],
         status=status["status"],
         error=status["error"]
     )

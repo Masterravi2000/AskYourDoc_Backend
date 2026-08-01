@@ -6,6 +6,7 @@ from app.features.workers.worker_pool import task_queue
 
 os.makedirs("docs/xls", exist_ok=True)
 
+
 async def upload_xls(files: list[UploadFile]):
     uploaded_files = []
     failed_files = []
@@ -23,36 +24,31 @@ async def upload_xls(files: list[UploadFile]):
 
             # Duplicate check
             if os.path.exists(file_path):
-                raise Exception("File already exists")
+                raise FileExistsError("Given xls already exists")
 
             with open(file_path, "wb") as f:
                 f.write(await file.read())
 
-            uploaded_files.append({
-                "fileId": fileId,
-                "filename": file.filename
-            })
-            
+            uploaded_files.append({"fileId": fileId, "filename": file.filename})
+
             # set status to queued
             set_status(fileId, file.filename, "queued")
-            
-            # push both id and file path into task_queue
-            task_queue.put({
-                "fileId": fileId,
-                "filePath": file_path
-            })
 
+            # push both id and file path into task_queue
+            task_queue.put({"fileId": fileId, "filePath": file_path})
+        except FileExistsError as e:
+            failed_files.append({"filename": file.filename, "error": str(e)})
+
+            set_status(fileId, file.filename, "failed", str(e))
+            print(f"{file.filename} → failed ❌ ({e})")
         except Exception as e:
-             if os.path.exists(file_path):
-                 os.remove(file_path) 
-                
-             failed_files.append({
-                "filename": file.filename,
-                "error": str(e)
-             })
-            
-             set_status(fileId, file.filename, "failed", str(e))
-             print(f"{file.filename} → failed ❌ ({e})")
+            if os.path.exists(file_path):
+                os.remove(file_path)
+
+            failed_files.append({"filename": file.filename, "error": str(e)})
+
+            set_status(fileId, file.filename, "failed", str(e))
+            print(f"{file.filename} → failed ❌ ({e})")
 
     return {
         "uploaded_files": uploaded_files,
