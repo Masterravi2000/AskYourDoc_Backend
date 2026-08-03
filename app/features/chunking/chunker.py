@@ -90,6 +90,9 @@ def _create_chunk(text: str, metadata: Dict, chunk_id: int) -> Dict:
         "page_number": metadata.get("page") if file_type == "pdf" else None,
         "slide_number": metadata.get("page") if file_type == "pptx" else None,
         "sheet_name": metadata.get("page") if file_type == "xls" else None,
+        "file_size": metadata.get("file_size"),
+        "created_on": metadata.get("created_on"),
+        "last_modified": metadata.get("last_modified"),
         "line_start": None,
         "line_end": None
     }

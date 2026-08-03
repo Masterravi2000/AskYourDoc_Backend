@@ -1,6 +1,6 @@
 import lancedb
 import pyarrow as pa
-import time
+import os
 from app.repositories.status_store_repository import set_status
 
 db = lancedb.connect("NexDoc_DB")
@@ -16,7 +16,10 @@ schema = pa.schema([
     pa.field("page_number", pa.int32(), nullable=True),
     pa.field("slide_number", pa.int32(), nullable=True),
     pa.field("line_start", pa.int32(), nullable=True),
-    pa.field("line_end", pa.int32(), nullable=True)
+    pa.field("line_end", pa.int32(), nullable=True),
+    pa.field("file_size", pa.int64(), nullable=True),
+    pa.field("created_on", pa.float64(), nullable=True),
+    pa.field("last_modified", pa.float64(), nullable=True),
 ])
 
 table = db.create_table(
@@ -47,6 +50,9 @@ def insert_embeddings(fileId: str, records):
             "slide_number": metadata.get("slide_number"),
             "line_start": metadata.get("line_start"),
             "line_end": metadata.get("line_end"),
+            "file_size": metadata.get("file_size"),
+            "created_on": metadata.get("created_on"),
+            "last_modified": metadata.get("last_modified"),
         })
 
     table.add(flattened_records)

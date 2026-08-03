@@ -6,6 +6,10 @@ from app.utils.text_cleaner import clean_and_normalize
 def extract_pdf(fileId: str, file_path: str) -> str:
     documents = []
     filename = os.path.basename(file_path)
+    stat  = os.stat(file_path)
+    file_size = stat.st_size
+    created_on = stat.st_birthtime
+    last_modified = stat.st_mtime
 
     try:
         set_status(fileId, filename, "processing")
@@ -24,7 +28,10 @@ def extract_pdf(fileId: str, file_path: str) -> str:
                         "metadata": {
                             "file_name": filename,
                             "file_type": "pdf",
-                            "page": page_num + 1
+                            "page": page_num + 1,
+                            "file_size": file_size,
+                            "created_on": created_on,
+                            "last_modified": last_modified
                         }
                     })
 

@@ -3,13 +3,14 @@ from app.repositories.lancedb_repository import table
 from app.features.search.hybrid_search import hybrid_filter
 from app.features.search.ranking import rank_results
 from app.features.search.readability_enchancement import enchance_readability
+from app.utils.file_metadata_formatter  import format_file_size, format_datetime
 
 
 def search_query(query: str, k: int = 5):
     # 🔹 Step 1: Embed query
     query_vector = model.encode(query).tolist()
 
-    # 🔹 Step 2: Search FAISS
+    # 🔹 Step 2: Search lanceDB
     results = (
         table.search(query_vector)
         .limit(k)
@@ -26,6 +27,9 @@ def search_query(query: str, k: int = 5):
 
             "file_name": row["file_name"],
             "file_type": row["file_type"],
+            "file_size": format_file_size(row["file_size"]),
+            "created_on": format_datetime(row["created_on"]),
+            "last_modified": format_datetime(row["last_modified"]),
 
             "page_number": row["page_number"],
             "slide_number": row["slide_number"],
