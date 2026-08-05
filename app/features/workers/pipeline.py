@@ -31,7 +31,7 @@ import os
 #      ↓
 # LanceDB Storage
 # ==========================================================
-def process_file(fileId: str, file_path: str):
+def process_file(fileId: str, file_path: str, last_modified):
 
     filename = os.path.basename(file_path)
     ext = os.path.splitext(file_path)[1].lower()
@@ -45,19 +45,19 @@ def process_file(fileId: str, file_path: str):
         # --------------------------------------------------
 
         if ext == ".pdf":
-            documents = extract_pdf(fileId, file_path)
+            documents = extract_pdf(fileId, file_path, last_modified)
 
         elif ext in [".png", ".jpg", ".jpeg"]:
-            documents = extract_image(fileId, file_path)
+            documents = extract_image(fileId, file_path, last_modified)
 
         elif ext == ".pptx":
-            documents = extract_pptx(fileId, file_path)
+            documents = extract_pptx(fileId, file_path, last_modified)
 
         elif ext == ".txt":
-            documents = extract_txt(fileId, file_path)
+            documents = extract_txt(fileId, file_path, last_modified)
 
         elif ext in [".xls", ".xlsx"]:
-            documents = extract_xls(fileId, file_path)
+            documents = extract_xls(fileId, file_path, last_modified)
 
         else:
             print(f"Unsupported file type: {file_path}")

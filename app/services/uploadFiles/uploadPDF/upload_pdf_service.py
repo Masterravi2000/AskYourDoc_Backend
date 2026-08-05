@@ -8,11 +8,11 @@ from uuid import uuid4
 # Ensure folder exists
 os.makedirs("docs/pdf", exist_ok=True)
 
-async def upload_pdfs(files: list[UploadFile]):
+async def upload_pdfs(files: list[UploadFile], last_modified: list[int]):
     uploaded_files = []
     failed_files = []
 
-    for file in files:
+    for index, file in enumerate(files):
         fileId = str(uuid4())
         file_path = f"docs/pdf/{file.filename}"
 
@@ -30,7 +30,7 @@ async def upload_pdfs(files: list[UploadFile]):
 
             uploaded_files.append({
                 "fileId": fileId,
-                "filename": file.filename
+                "filename": file.filename,
             })
             
             # set done status
@@ -39,7 +39,8 @@ async def upload_pdfs(files: list[UploadFile]):
             # push both id and file path into task_queue
             task_queue.put({
                 "fileId": fileId,
-                "filePath": file_path
+                "filePath": file_path,
+                "last_modified": last_modified[index]
             })
             
         except FileExistsError as e:

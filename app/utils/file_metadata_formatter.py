@@ -13,4 +13,6 @@ def format_file_size(size: int) -> str:
 
 
 def format_datetime(timestamp: float) -> str:
-    return datetime.fromtimestamp(timestamp).strftime("%d %b %Y, %I:%M %p")
+    if timestamp > 1e10:  # milliseconds
+        timestamp /= 1000
+    return datetime.fromtimestamp(timestamp).strftime("%d %b %Y")

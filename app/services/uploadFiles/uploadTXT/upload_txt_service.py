@@ -7,11 +7,11 @@ from app.features.workers.worker_pool import task_queue
 os.makedirs("docs/txt", exist_ok=True)
 
 
-async def upload_txt(files: list[UploadFile]):
+async def upload_txt(files: list[UploadFile], last_modified: list[int]):
     uploaded_files = []
     failed_files = []
 
-    for file in files:
+    for index, file in enumerate(files):
         fileId = str(uuid4())
         file_path = f"docs/txt/{file.filename}"
 
@@ -33,7 +33,12 @@ async def upload_txt(files: list[UploadFile]):
             set_status(fileId, file.filename, "queued")
 
             # push both id and file path into task_queue
-            task_queue.put({"fileId": fileId, "filePath": file_path})
+            task_queue.put({
+                "fileId": fileId, 
+                "filePath": file_path,
+                "last_modified": last_modified[index]
+                })
+            
         except FileExistsError as e:
             failed_files.append({"filename": file.filename, "error": str(e)})
 

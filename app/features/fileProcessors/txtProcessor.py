@@ -1,13 +1,12 @@
 import os
 from app.repositories.status_store_repository import set_status
 
-def extract_txt(fileId: str, file_path: str) -> str:
+def extract_txt(fileId: str, file_path: str, last_modified: float) -> str:
     filename = os.path.basename(file_path)
     documents = []
     stat  = os.stat(file_path)
     file_size = stat.st_size
     created_on = stat.st_birthtime
-    last_modified = stat.st_mtime
 
     try:
         set_status(fileId, filename, "processing")

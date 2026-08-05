@@ -7,6 +7,7 @@ from app.controllers.uploadFile.uploadTXT.upload_txt_route import router as uplo
 from app.controllers.uploadFile.uploadXLS.upload_xls_route import router as upload_xls_router
 from app.controllers.search.search_routes import router as search_router
 from app.controllers.status.status_route import router as status_router
+from app.controllers.download.download_routes import router as download_route
 from app.features.workers.file_watcher import start_watching
 import app.features.workers.file_watcher as file_watcher
 from app.features.workers.worker_pool import start_worker_pool
@@ -45,6 +46,7 @@ app.include_router(upload_txt_router, prefix="/api")
 app.include_router(upload_xls_router, prefix="/api")
 app.include_router(search_router, prefix="/api")
 app.include_router(status_router, prefix="/api")
+app.include_router(download_route, prefix="/api")
 
 @app.get("/status")
 def get_status():

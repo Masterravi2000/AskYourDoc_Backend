@@ -36,12 +36,13 @@ def worker():
          
          fileId = task["fileId"]
          filePath = task["filePath"]
+         last_modified = task["last_modified"]
          
          try:
              
-             print(f"[Worker] Processing : {filePath}")
+            #  print(f"[Worker] Processing : {filePath}")
              
-             process_file(fileId, filePath)
+             process_file(fileId, filePath, last_modified)
         
          except Exception as e:
              

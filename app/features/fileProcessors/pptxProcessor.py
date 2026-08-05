@@ -3,13 +3,12 @@ import os
 import time
 from app.repositories.status_store_repository import set_status 
 
-def extract_pptx(fileId: str, file_path: str) -> str:
+def extract_pptx(fileId: str, file_path: str, last_modified: float) -> str:
     documents = []
     filename = os.path.basename(file_path)
     stat  = os.stat(file_path)
     file_size = stat.st_size
     created_on = stat.st_birthtime
-    last_modified = stat.st_mtime
     
     # start = time.perf_counter()
     
