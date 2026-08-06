@@ -57,6 +57,7 @@ def insert_embeddings(fileId: str, records):
         })
 
     table.add(flattened_records)
+    print(records[0]["metadata"]["file_type"])
     increment_file(records[0]["metadata"]["file_type"])
     # print(f"[LanceDB Storage] Completed in {time.perf_counter() - start:.3f} sec")
     

@@ -20,6 +20,7 @@ def extract_image(fileId: str, file_path: str, last_modified: float) -> str:
     documents = []
     stat  = os.stat(file_path)
     file_size = stat.st_size
+    file_type = os.path.splitext(file_path)[1].lower().replace(".","")
     created_on = stat.st_birthtime
     
     try:
@@ -34,7 +35,7 @@ def extract_image(fileId: str, file_path: str, last_modified: float) -> str:
                     "text": text,
                     "metadata": {
                         "file_name": filename,
-                        "file_type": "image",
+                        "file_type": file_type,
                         "page": 1,
                         "file_size": file_size,
                         "created_on": created_on,

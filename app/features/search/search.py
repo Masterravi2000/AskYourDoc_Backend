@@ -6,8 +6,12 @@ from app.features.search.readability_enchancement import enchance_readability
 from app.utils.file_metadata_formatter  import format_file_size, format_datetime
 from app.services.stats.stats_service import increment_search
 
+search_counter = 0
 
 def search_query(query: str, k: int = 5):
+    # declare the global variable
+    global search_counter
+    
     # 🔹 Step 1: Embed query
     query_vector = model.encode(query).tolist()
 
@@ -39,8 +43,12 @@ def search_query(query: str, k: int = 5):
             "line_end": row["line_end"]
         })
         
+    #increment the search_counter global variable
+    search_counter += 1 
+    
     # increment search
-    increment_search()
+    if search_counter % 4 ==  0:
+        increment_search()
     
     # Step 4: Hybrid Search
     filtered_result = hybrid_filter(query, formatted_results)
