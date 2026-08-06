@@ -4,6 +4,7 @@ from app.features.search.hybrid_search import hybrid_filter
 from app.features.search.ranking import rank_results
 from app.features.search.readability_enchancement import enchance_readability
 from app.utils.file_metadata_formatter  import format_file_size, format_datetime
+from app.services.stats.stats_service import increment_search
 
 
 def search_query(query: str, k: int = 5):
@@ -37,6 +38,9 @@ def search_query(query: str, k: int = 5):
             "line_start": row["line_start"],
             "line_end": row["line_end"]
         })
+        
+    # increment search
+    increment_search()
     
     # Step 4: Hybrid Search
     filtered_result = hybrid_filter(query, formatted_results)

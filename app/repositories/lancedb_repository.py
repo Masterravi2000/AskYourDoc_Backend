@@ -2,6 +2,7 @@ import lancedb
 import pyarrow as pa
 import os
 from app.repositories.status_store_repository import set_status
+from app.services.stats.stats_service import increment_file
 
 db = lancedb.connect("NexDoc_DB")
 
@@ -56,7 +57,7 @@ def insert_embeddings(fileId: str, records):
         })
 
     table.add(flattened_records)
-    
+    increment_file(records[0]["metadata"]["file_type"])
     # print(f"[LanceDB Storage] Completed in {time.perf_counter() - start:.3f} sec")
     
 def inspect_vector_db():
