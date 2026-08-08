@@ -1,7 +1,7 @@
 import sqlite3
 import os
 
-DB_PATH = "app/database/stats.db"
+DB_PATH = "app/database/nexdoc.db"
 
 os.makedirs("app/database", exist_ok=True)
 
