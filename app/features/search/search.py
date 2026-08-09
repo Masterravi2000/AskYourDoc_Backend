@@ -5,15 +5,23 @@ from app.features.search.ranking import rank_results
 from app.features.search.readability_enchancement import enchance_readability
 from app.utils.file_metadata_formatter  import format_file_size, format_datetime
 from app.services.stats.stats_service import increment_search
+from app.services.nexai.nexai_service import ask_ai
+from app.utils.topic_extractor import extract_topic
 
 search_counter = 0
 
-def search_query(query: str, k: int = 5):
+def search_query(query: str,mode: str, k: int = 5):
     # declare the global variable
     global search_counter
     
-    # 🔹 Step 1: Embed query
-    query_vector = model.encode(query).tolist()
+    # step 1: extract topic from query only when mode == "ai"
+    if mode == "ai" :
+        topic = extract_topic(query)
+        # Embed topic
+        query_vector = model.encode(topic).tolist()
+    else :
+        # Embed query
+        query_vector = model.encode(query).tolist()
 
     # 🔹 Step 2: Search lanceDB
     results = (
@@ -51,8 +59,24 @@ def search_query(query: str, k: int = 5):
         increment_search()
     
     # Step 4: Hybrid Search
-    filtered_result = hybrid_filter(query, formatted_results)
-    filtered_result = rank_results(query, filtered_result)
-    filtered_result = enchance_readability(query, filtered_result)
+    if mode == "ai" :
+        filtered_result = hybrid_filter(topic, formatted_results)
+    else :
+        filtered_result = hybrid_filter(query, formatted_results)
     
-    return filtered_result
+    # Step 5: Ranking
+    if mode == "ai" :
+        filtered_result = rank_results(topic, filtered_result)
+    else :
+        filtered_result = rank_results(query, filtered_result)
+    
+    # OFFLINE MODE
+    if mode == "offline":
+        return enchance_readability(query, filtered_result)
+
+    # AI MODE
+    elif mode == "ai":
+        return ask_ai(query, filtered_result)
+
+    else:
+        raise ValueError("Invalid search mode")
