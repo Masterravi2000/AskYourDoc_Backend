@@ -1,10 +1,17 @@
 # app/embedding/embedder.py
-
+import os
+import sys
 from sentence_transformers import SentenceTransformer
 from app.repositories.status_store_repository import set_status
 
-# ✅ Load model once (global - avoids reloading every time)
-model = SentenceTransformer("all-MiniLM-L12-v2")
+if getattr(sys, "frozen", False):
+    BASE_DIR = sys._MEIPASS
+else:
+    BASE_DIR = os.path.abspath(".")
+
+MODEL_PATH = os.path.join(BASE_DIR, "models", "all-MiniLM-L12-v2")
+
+model = SentenceTransformer(MODEL_PATH)
 
 
 def embed_chunks(fileId: str, chunks):

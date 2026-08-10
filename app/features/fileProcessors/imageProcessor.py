@@ -13,7 +13,7 @@ def get_tesseract_path():
     return os.path.join(base_path, "tesseract", "tesseract.exe")
 
 # pytesseract.pytesseract.tesseract_cmd = get_tesseract_path()
-pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+pytesseract.pytesseract.tesseract_cmd = get_tesseract_path()
 
 def extract_image(fileId: str, file_path: str, last_modified: float) -> str:
     filename = os.path.basename(file_path)

@@ -64,3 +64,7 @@ app.include_router(recent_search_router, prefix="/api")
 @app.get("/status")
 def get_status():
     return {"status": "ready" if file_watcher.WATCHER_READY else "loading"}
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="127.0.0.1", port=8000)
