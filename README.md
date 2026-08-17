@@ -3,7 +3,7 @@
   <img src="assets/nexdoc_banner.png" width="100%" />
 </p>
 
-# Nexdoc Backend
+# Nexdoc
 
 ### 🧠 Offline AI-Powered Document Intelligence & Search Engine
 
